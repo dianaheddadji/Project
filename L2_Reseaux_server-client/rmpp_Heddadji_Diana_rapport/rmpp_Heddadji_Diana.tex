@@ -1,0 +1,244 @@
+\documentclass[handout]{beamer}
+
+%LES PAQUETS
+\usepackage[frenchb]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[utf8x]{inputenc}
+\usepackage {multicol}
+
+%LE THEME
+\usetheme{Warsaw}
+\definecolor{bazaar}{rgb}{0.4, 0.47, 0.78}
+\usecolortheme[named=bazaar]{structure}
+\title[Réseaux : modèles, protocoles, programmation]{\Huge{Projet Chat}}
+\subtitle{V. Python}
+\author{Diana Heddadji}
+\institute{PARIS VIII - UFR MITSIC / L2 Informatique}
+
+
+\begin{document}
+	%Présentation
+	\begin{frame}
+	\titlepage
+	\includegraphics{Images/logop8.png}
+	\end{frame}
+
+	%Sommaire
+  	\begin{frame}
+  	\frametitle{Sommaire}
+	\begin{multicols}{2}
+	\large {\hyperlink{I}{\\{Introduction}}}
+			\newline \\
+		\begin{itemize}
+			\setbeamertemplate{itemize item}[ball]
+			\item\small{Choix du projet de groupe}
+			\setbeamertemplate{itemize item}[ball]
+			\item \small{Protocole}
+			\newline \\
+		\end{itemize}
+
+	\large {\hyperlink{O}{\\{Organisation du Projet}}}
+			\newline \\
+		\begin{itemize}
+			\setbeamertemplate{itemize item}[ball]
+			\item \small{Les fichiers}
+		\end{itemize}
+
+	\large {\hyperlink{A}{\\{Une Approche vers le Code}}}
+			\newline \\
+		\begin{itemize}
+			\setbeamertemplate{itemize item}[ball]
+			\item \small{Le Client et le Serveur}
+				\begin{itemize}
+				\setbeamertemplate{itemize item}[ball]
+				\item \small{Importation du socket}
+				\setbeamertemplate{itemize item}[ball]
+				\item \small{Connexion du socket}
+				\setbeamertemplate{itemize item}[ball]
+				\item \small{Faire écouter le socket}
+				\setbeamertemplate{itemize item}[ball]
+				\item \small{Accepter une connexion venant du client}
+				\setbeamertemplate{itemize item}[ball]
+				\item \small{Création du Client}
+				\setbeamertemplate{itemize item}[ball]
+				\item \small{Les méthodes send et recv}
+				\setbeamertemplate{itemize item}[ball]
+				\item \small{La méthode select}
+				\setbeamertemplate{itemize item}[ball]
+				\item \small{Fermer la connexion}
+				\end{itemize}
+		\end{itemize}
+  	\tableofcontents[currentsection, hideothersubsections, pausesubsections]
+	\end{multicols}
+  	\end{frame}
+	
+	%Introduction | Choix du projet de groupe
+	\begin{frame} [label=I]
+	\frametitle{Introduction | Choix du projet de groupe}
+	{\itshape Le but de ce projet est de parvenir à réaliser un chat en groupe de 	cinq.\newline \\Chaque membre du groupe choisira un langage de programmation 		différent afin 	de créer un client et un serveur en suivant un protocole 			précis.}
+  	\end{frame}
+
+	%Introduction | Protocole
+	\begin{frame}
+	\frametitle{Introduction | Protocole}
+		\href{protocole.md}{protocole.md : Protocole}
+	\end{frame}
+	
+	%Organisation du Projet | Les fichiers
+	\begin{frame} [label=O]
+	\frametitle{Organisation du Projet | Les fichiers}
+	Dans la partie python du projet, il y a deux fichiers :
+	\begin{itemize}
+		\setbeamertemplate{itemize item}[ball]
+		\item \bfseries{client.py}
+		\setbeamertemplate{itemize item}[ball]
+		\item \bfseries{serveur.py}
+	\end{itemize}
+	\end{frame}
+	
+	%Une Approche vers le Code | Importation du socket
+	\begin{frame} [label=A]
+	\frametitle{Une Approche vers le Code | Importation du socket}
+	On commence par importer notre socket avec :\newline \\
+	{\bfseries import socket}\newline \\
+	Pour créer notre socket, il est nécessaire de faire un appel au constructeur 				{\bfseries socket}.\newline \\
+	On aura besoin des deux paramètres suivants s'il s'agit d'une connexion {\bfseries 			TCP} :
+	\begin{itemize}
+		\setbeamertemplate{itemize item}[ball]
+		\item {\bfseries socket.AF-INET} : la familles des adresses internet;
+		\setbeamertemplate{itemize item}[ball]
+		\item {\bfseries socket.SOCK-STREAM} : Pour le protocole {\bfseries TCP}, 					{\bfseries SOCK-STREAM} est le type du {\bfseries socket}.\newline
+	\end{itemize}
+ 	{\bfseries main-connection = socket.socket(socket.AF-INET, socket.SOCK-STREAM)}
+	\end{frame}
+
+	%Une Approche vers le Code | Connexion du socket
+	\begin{frame}
+	\frametitle{Une Approche vers le Code | Connexion du socket}
+	Pour connecter le {\bfseries socket}, on utilisera la méthode {\bfseries bind} dans le 	cas où le serveur attend des clients.
+	Cette dernière prend le tuple {\bfseries (nom-hote, port)}.\newline \\
+	{\bfseries main-connection.bind(('', 2222))}
+	\end{frame}
+	
+	%Une Approche vers le Code | Faire écouter le socket
+	\begin{frame}
+	\frametitle{Une Approche vers le Code | Faire écouter le socket}
+	Pour faire écouter notre {\bfseries socket}, il faut lui renseigner le nombre maximum 		de connexions qu'il peut recevoir sur le port sans les accepter.
+	Ceci ce fait par la méthode {\bfseries listen} qui prend ce nombre en paramètre.
+	\end{frame}
+	
+	%Une Approche vers le Code | Accepter une connexion venant du client
+	\begin{frame}
+	\frametitle{Une Approche vers le Code | Accepter une connexion venant du client}
+	Pour accepter une connexion venant du client, l'usage de la méthode {\bfseries accept} 	est nécessaire afin de bloquer le programme tant que personne ne s'est connecté.			\newline \\
+	Cette méthode retourne deux informations :
+	\begin{itemize}
+		\setbeamertemplate{itemize item}[ball]
+		\item La première est le {\bfseries socket} connecté qui vient de se créer qui 				nous permettra par la suite de dialoguer avec notre client.
+		\setbeamertemplate{itemize item}[ball]
+		\item La seconde est un tuple comportant l'adresse {\bfseries IP} ainsi que le 				port de connexion du client.\newline \\
+	\end{itemize}
+	{\bfseries connection-client, connection-info = main-connection.accept()}
+	\end{frame}
+
+	%Une Approche vers le Code | Création du Client Part. 1
+	\begin{frame}
+	\frametitle{Une Approche vers le Code | Création du Client Part. 1}
+	Pour créer ensuite le client, le principe est le même que celui du {\bfseries socket} 		:\newline \\{\bfseries import socket\\
+	connection-server = socket.socket(socket.AF-INET, socket.SOCK-STREAM)}						\newline \\
+	On connecte ensuite le client avec la méthode {\bfseries connect}. Celle-ci prend un 		tuple en paramètre comportant le nom d'hote et le numéro du port identifiant le 			serveur auquel on veut se connecter.\newline \\
+	{\bfseries connection-server.connect(('localhost', 2222))}\newline \\
+	Le serveur et le client étant désormais connectés, cela signifie que la méthode 			{\bfseries accept} ne bloque plus le programme étant donné qu'elle vient d'accepter 		la connexion du client.
+	\end{frame}
+
+	%Une Approche vers le Code | Création du Client Part. 2
+	\begin{frame}
+	\frametitle{Une Approche vers le Code | Création du Client Part. 2}
+	On peut afficher l'adresse {\bfseries IP} et le {\bfseries port} du client avec {\bfseries 	print(connection-info)} du côté du serveur.\newline \\
+	L'adresse IP vaut {\bfseries 127.0.0.1} il s'agit de l'adresse {\bfseries IP local} de la machine 		est donc {\bfseries localhost} redirige vers cette adresse {\bfseries IP}.\newline \\
+	Pour faire communiquer nos sockets, il suffit d'utiliser les méthodes {\bfseries send} 		et {\bfseries recv}.\newline \\
+	Au niveau du serveur cela se fera comme suit :\newline \\
+	{\bfseries client.send(b"ok")}
+	\begin{itemize}
+		\setbeamertemplate{itemize item}[ball]
+		\item {\bfseries send} : retourne le nombre de caractères envoyés
+		\setbeamertemplate{itemize item}[ball]
+		\item {\bfseries recv} : prend ce que retourne {\bfseries send} c'est-à-dire, le 			nombre de caractères à lire.
+	\end{itemize}	
+	Côté client, on réceptionnera le message que l'on vient d'envoyer.
+	\end{frame}	
+
+
+	%Une Approche vers le Code | Création du Client Part. 3
+	\begin{frame}
+	\frametitle{Une Approche vers le Code | Création du Client Part. 3}
+	Étant donné qu'on ne sait pas à l'avance le nombre de caractères qu'on recevra, on lui donne conventionnellement la valeur 2000.\\ Si le message comporte plus de caractères 		alors on récupère le reste après.\newline \\
+	Côté client, ceci se fera comme suit :\\
+	{\bfseries 	msg-received  = connection-server.recv(2000)}
+	\end{frame}
+
+	%Une Approche vers le Code | Les méthodes send et recv
+	\begin{frame}
+	\frametitle{Une Approche vers le Code | Les méthodes encode et decode}
+	À chaque fois que le serveur reçoit un message, il envoie un accusé de réception : {\bfseries "OK"}.	\newline \\
+	Côté client, on peut remarquer l'utilisation des méthodes de {\bfseries str} :				{\bfseries encode} et {\bfseries decode};\newline \\
+	{\bfseries encode} sert à partir d'un nom d'encodage {\bfseries (Utf-8)} de passer un 		{\bfseries str} en chaîne {\bfseries bytes} et {\bfseries decode} permet de faire 					exactement l'inverse.\newline \\
+	Les informations transmises par {\bfseries send} et {\bfseries recv} sont des chaînes 		de {\bfseries bytes}, pas des {\bfseries str} et c'est {\bfseries encode} et 				{\bfseries decode} qui permettent de traduire les messages reçus et envoyés.
+	\end{frame}
+
+	%Une Approche vers le Code | La méthode select Part. 1
+	\begin{frame}
+	\frametitle{Une Approche vers le Code | La méthode select Part. 1}
+	Du côté de notre serveur, on peut voir la présence du module {\bfseries select}, 			celui-ci va interroger plusieurs clients dans l'attente d'un message à réceptionner, 		sans mettre en pause le programme.\newline \\
+
+	{\bfseries Select} va donc écouter sur une liste de clients et retourner au bout d'un 		certain temps.\newline \\
+	Ce qui est retourné est la liste des clients qui ont un message à réceptionner.				\newline \\
+	On utilisera la méthode {\bfseries select} qui prend trois ou quatre arguments et en 		retourne trois.
+	\end{frame}
+	
+	%Une Approche vers le Code | La méthode select Part. 2
+	\begin{frame}
+	\frametitle{Une Approche vers le Code | La méthode select Part. 2}
+	Dans l'ordre, les paramètres de {\bfseries select} sont : \newline \\
+	\begin{itemize}
+		\setbeamertemplate{itemize item}[ball]
+		\item {\bfseries rlist} : la liste des sockets en attente d'être lus;
+		\setbeamertemplate{itemize item}[ball]
+		\item {\bfseries wlist} : la liste des sockets en attente d'être écrits;
+		\setbeamertemplate{itemize item}[ball]
+		\item {\bfseries xlist} : la liste des sockets en attente d'une erreur;
+		\setbeamertemplate{itemize item}[ball]
+		\item {\bfseries timeout} : le délai pendant lequel la fonction attend avant de 		retourner.
+	\end{itemize}
+	\end{frame}
+
+	%Une Approche vers le Code | La méthode select Part. 3
+	\begin{frame}
+	\frametitle{Une Approche vers le Code | | La méthode select Part. 3}
+	On créer une liste {\bfseries connected-client} afin d'y mettre des 			{\bfseries sockets} de façon à ce que {\bfseries select} les surveille et 		puisse retourner dès qu'un {\bfseries socket} est prêt à être lu.
+	Ainsi, le programme ne bloquera pas et pourra recevoir des messages de 			plusieurs clients.\newline \\
+	
+	En précisant notre {\bfseries timeout}, {\bfseries select} retournera au bout du temps en secondes que l'on aura indiqué {\bfseries (ici 0.05)}, ou si un {\bfseries socket} est prêt à être lu.
+	\end{frame}
+
+	%Une Approche vers le Code | La méthode select Part. 4
+	\begin{frame}
+	\frametitle{Une Approche vers le Code | | La méthode select Part. 4}
+	{\bfseries select} renvoie trois listes {\bfseries rlist}, {\bfseries wlist} 		et {\bfseries xlist}.\newline \\
+
+	{\bfseries read-client, list1, list2 = select.select(connected-client, [], 			[],	0.05)}\newline \\
+	Cette instruction va écouter les sockets contenus dans 	la liste {\bfseries 		connected-client}.
+	\end{frame}
+	
+	%Une Approche vers le Code | Fermer la connexion
+	\begin{frame}
+	\frametitle{Une Approche vers le Code | Fermer la connexion}
+	Enfin pour fermer la connexion, il suffit d'appeler la méthode {\bfseries close} sur 		le {\bfseries socket}.\newline \\
+	Côté client :\newline \\
+	{\bfseries connection-server.close()}\newline \\
+	Côté serveur:\newline \\
+	{\bfseries main-connection.close()}\newline \\
+	Le serveur tourne jusqu'à recevoir le message {\bfseries "BYE"}.
+	\end{frame}
+	
+\end{document}
