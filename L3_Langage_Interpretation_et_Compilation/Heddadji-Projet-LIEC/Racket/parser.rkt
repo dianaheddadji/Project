@@ -1,0 +1,95 @@
+#lang racket/base
+
+(require "ast.rkt"
+				 "lexer.rkt"
+         parser-tools/yacc)
+
+(provide parse)
+
+(define parse-syntax
+ (parser
+  (tokens operators keywords delimiters variables values)
+  (start prog)
+  (end Eof)
+  (grammar
+   (prog
+	  ((expr)                (list $1))
+    ((declaration)         (list $1))
+    ((declaration prog)    (cons $1 $2))
+    ((expr prog)           (cons $1 $2)))
+   (expr
+    ((condition)          $1)
+    ((for)                $1)
+    ((funcall)            $1)
+    ((max)                $1)
+    ((min)                $1)
+    ((Not)                $1)
+    ((operation)          $1)
+    ((print)              $1)
+    ((return)             $1)
+    ((while)              $1)
+    ((val)                $1))
+   (declaration
+    ((Lvar Lassign expr) (Pdefine (Pid $1) $3))
+    ((Ldef Lvar Lopar param Lcpar Lcol expr) (Pfunction (Pid $2) (Pparam $4) $7)))
+   (param
+    ((Lvar Lcomma param) (cons (Pparam $1 $3)))
+    ((Lvar)              (list (Pparam $1)))
+    ((Lpnil)             (list (Pparam 'nil))))
+   (call
+    ((expr Lcomma param) (cons (Pcall (Pid $1) $3)))
+    ((expr)              (list (Pcall (Pid $1))))
+    ((Lpnil)             (list (Pcall (Pid 'nil)))))
+   (max ((Lmax Lopar expr Lcomma expr Lcpar) (Pmax $3 $5)))
+   (min ((Lmin Lopar expr Lcomma expr Lcpar) (Pmin $3 $5)))
+   (return ((Lreturn expr) (Preturn $2)))
+   (funcall ((Lvar Lopar call Lcpar) (Pfun (Pid $1) $3)))
+   (print ((Lprint Lopar Lquote expr Lquote Lcpar) (Pprint $4))
+    ((Lprint Lopar expr Lcpar) (Pprint_nb $3))
+    ((Lprint Lopar val Lcpar) (Pprint_ $3)))
+   (Not ((Lnot expr) (Pnot 'not $2)))
+   (operation 
+		((expr Ladd expr) (Poperator 'add $1 $3))
+	  ((expr Lsub expr) (Poperator 'sub $1 $3))
+    ((expr Lmul expr) (Poperator 'mul $1 $3))
+    ((expr Ldiv expr) (Poperator 'div $1 $3))
+    ((expr Land expr) (Poperator 'and $1 $3))
+    ((expr Leq expr) (Poperator 'eq $1 $3))
+    ((expr Lieq expr) (Poperator 'ieq $1 $3))
+    ((expr Linf expr) (Poperator 'inf $1 $3))
+    ((expr Lmod expr) (Poperator 'mod $1 $3))
+    ((expr Lneq expr) (Poperator 'neq $1 $3))
+    ((expr Lor expr) (Poperator 'or $1 $3))
+    ((expr Lseq expr) (Poperator 'seq $1 $3))
+    ((expr Lsl expr) (Poperator '<< $1 $3))
+    ((expr Lsr expr) (Poperator '>> $1 $3))
+    ((expr Lsup expr) (Poperator 'sup $1 $3)))
+   (val ((Lnum) (Pval $1))
+      ((Lvar) (Pid $1))
+      ((Lbool) (Pbool $1)))
+   (condition ((Lif expr Lcol expr Lelse Lcol expr) (Pcond $2 $4 $7)))
+   (while ((Lwhile expr Lcol expr) (Ploop $2 $4)))
+   (for ((Lfor Lvar Lin Lrange Lopar Lnum Lcomma Lnum Lcpar Lcol expr)  (Pfor (Pid $2) (Pval $6) (Pval $8) $11))))
+ 
+  (precs (left Ladd)
+         (left Lsub)
+         (left Lmul)
+         (left Ldiv)
+         (left Land)
+         (left Leq)
+         (left Lieq)
+         (left Linf)
+         (left Lmod)
+         (left Lneq)
+         (left Lnot)
+         (left Lor)
+         (left Lsl)
+         (left Lseq)
+         (left Lsr)
+         (left Lsup))
+    (error
+        (lambda (ok? name value)
+        (error 'Parser "Error?")))))
+
+(define (parse src)
+ (parse-syntax (lambda () (get-token src))))
